@@ -6,6 +6,8 @@ import styles from "./page.module.css";
 interface Snowflake {
   x: number;
   y: number;
+  vx: number;
+  vy: number;
   size: number;
   speed: number;
   opacity: number;
@@ -15,11 +17,21 @@ export default function FallingSnow() {
   const [snowSize, setSnowSize] = useState(1);
   const [snowCount, setSnowCount] = useState(200);
   const snowSizeRef = useRef(1);
+  const mousePos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     snowSizeRef.current = snowSize;
   }, [snowSize]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mousePos.current = { x: e.clientX, y: e.clientY };
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -38,6 +50,8 @@ export default function FallingSnow() {
       snowflakes.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
+        vx: 0,
+        vy: Math.random() * 2 + 1,
         size: Math.random() * 3 + 2,
         speed: Math.random() * 2 + 1,
         opacity: Math.random() * 0.5 + 0.5,
@@ -48,17 +62,48 @@ export default function FallingSnow() {
       ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
 
       snowflakes.forEach((flake) => {
+        // Calculate distance to mouse
+        const dx = mousePos.current.x - flake.x;
+        const dy = mousePos.current.y - flake.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Apply attraction force toward cursor
+        const attractionRange = 300;
+        const attractionStrength = 0.3;
+
+        if (distance < attractionRange) {
+          const force = (1 - distance / attractionRange) * attractionStrength;
+          flake.vx += (dx / distance) * force;
+          flake.vy += (dy / distance) * force;
+        }
+
+        // Gravity
+        flake.vy += flake.speed * 0.02;
+
+        // Damping
+        flake.vx *= 0.98;
+        flake.vy *= 0.98;
+
+        // Update position
+        flake.x += flake.vx;
+        flake.y += flake.vy;
+
+        // Wrap around and reset
+        if (flake.y > canvas.height + 50 || flake.x < -50 || flake.x > canvas.width + 50) {
+          flake.y = -flake.size * snowSizeRef.current;
+          flake.x = Math.random() * canvas.width;
+          flake.vx = 0;
+          flake.vy = Math.random() * 2 + 1;
+        }
+
+        // Wrap horizontally
+        if (flake.x < 0) flake.x = canvas.width;
+        if (flake.x > canvas.width) flake.x = 0;
+
         ctx.globalAlpha = flake.opacity;
         ctx.beginPath();
         ctx.arc(flake.x, flake.y, flake.size * snowSizeRef.current, 0, Math.PI * 2);
         ctx.fill();
-
-        flake.y += flake.speed;
-
-        if (flake.y > canvas.height) {
-          flake.y = -flake.size * snowSizeRef.current;
-          flake.x = Math.random() * canvas.width;
-        }
       });
 
       ctx.globalAlpha = 1;
