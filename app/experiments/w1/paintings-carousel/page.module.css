@@ -23,9 +23,10 @@
   overflow: hidden;
 }
 
-.canvas {
+.image {
   width: 100%;
   height: 100%;
+  object-fit: contain;
   display: block;
   animation: fadeIn 0.5s ease-in-out;
 }
