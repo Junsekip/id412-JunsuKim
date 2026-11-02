@@ -9,8 +9,10 @@ interface Snowflake {
   vx: number;
   vy: number;
   size: number;
+  baseSize: number;
   speed: number;
   opacity: number;
+  mass: number;
 }
 
 export default function FallingSnow() {
@@ -47,14 +49,17 @@ export default function FallingSnow() {
 
     // Initialize snowflakes
     for (let i = 0; i < snowCount; i++) {
+      const baseSize = Math.random() * 3 + 2;
       snowflakes.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         vx: 0,
         vy: Math.random() * 2 + 1,
-        size: Math.random() * 3 + 2,
+        size: baseSize,
+        baseSize: baseSize,
         speed: Math.random() * 2 + 1,
         opacity: Math.random() * 0.5 + 0.5,
+        mass: 1,
       });
     }
 
@@ -62,6 +67,26 @@ export default function FallingSnow() {
       ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
 
       snowflakes.forEach((flake) => {
+        // Count nearby particles to grow size
+        let nearbyCount = 0;
+        const clumpingDistance = flake.size * 8;
+
+        snowflakes.forEach((other) => {
+          if (flake !== other) {
+            const dx = other.x - flake.x;
+            const dy = other.y - flake.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < clumpingDistance) {
+              nearbyCount++;
+            }
+          }
+        });
+
+        // Grow size based on nearby particles
+        const maxMass = 1 + nearbyCount * 0.15;
+        flake.mass += (maxMass - flake.mass) * 0.05;
+        flake.size = flake.baseSize * Math.sqrt(flake.mass);
+
         // Calculate distance to mouse
         const dx = mousePos.current.x - flake.x;
         const dy = mousePos.current.y - flake.y;
@@ -94,6 +119,7 @@ export default function FallingSnow() {
           flake.x = Math.random() * canvas.width;
           flake.vx = 0;
           flake.vy = Math.random() * 2 + 1;
+          flake.mass = 1;
         }
 
         // Wrap horizontally
