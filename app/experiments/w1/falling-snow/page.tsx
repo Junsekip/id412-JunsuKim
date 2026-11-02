@@ -13,7 +13,12 @@ interface Snowflake {
 
 export default function FallingSnow() {
   const [snowSize, setSnowSize] = useState(1);
+  const snowSizeRef = useRef(1);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    snowSizeRef.current = snowSize;
+  }, [snowSize]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -45,13 +50,13 @@ export default function FallingSnow() {
       snowflakes.forEach((flake) => {
         ctx.globalAlpha = flake.opacity;
         ctx.beginPath();
-        ctx.arc(flake.x, flake.y, flake.size * snowSize, 0, Math.PI * 2);
+        ctx.arc(flake.x, flake.y, flake.size * snowSizeRef.current, 0, Math.PI * 2);
         ctx.fill();
 
         flake.y += flake.speed;
 
         if (flake.y > canvas.height) {
-          flake.y = -flake.size * snowSize;
+          flake.y = -flake.size * snowSizeRef.current;
           flake.x = Math.random() * canvas.width;
         }
       });
