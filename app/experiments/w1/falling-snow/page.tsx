@@ -105,18 +105,18 @@ export default function FallingSnow() {
         const cursorSpeed = Math.sqrt(mouseVel.current.x ** 2 + mouseVel.current.y ** 2);
         const throwThreshold = 15;
 
-        // Apply throwing force when cursor moves fast
-        if (cursorSpeed > throwThreshold && distance < 350) {
+        // Apply throwing force only to gathered snowballs (mass > 1)
+        if (cursorSpeed > throwThreshold && distance < 350 && flake.mass > 1) {
           const throwForce = (cursorSpeed - throwThreshold) * 0.8;
           flake.vx += mouseVel.current.x * throwForce * 0.1;
           flake.vy += mouseVel.current.y * throwForce * 0.1;
         }
 
-        // Apply attraction force toward cursor (reduced when throwing)
+        // Apply attraction force toward cursor
         const attractionRange = 300;
-        const attractionStrength = cursorSpeed > throwThreshold ? 0.05 : 0.3;
+        const attractionStrength = 0.3;
 
-        if (distance < attractionRange && cursorSpeed <= throwThreshold) {
+        if (distance < attractionRange) {
           const force = (1 - distance / attractionRange) * attractionStrength;
           flake.vx += (dx / distance) * force;
           flake.vy += (dy / distance) * force;
