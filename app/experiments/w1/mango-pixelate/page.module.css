@@ -1,0 +1,83 @@
+/* Black page, like the board behind the LEDs; the canvas sits in the vertical middle.
+   Scrolls if the mango is taller than the window. */
+.container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: safe center;
+  overflow-y: auto;
+  background: black;
+}
+
+.canvas {
+  display: block;
+}
+
+/* Lower-left, so the options panel has the lower-right corner */
+.credit {
+  position: fixed;
+  left: 8px;
+  bottom: 8px;
+  margin: 0;
+  padding: 2px 6px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  color: white;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.credit a {
+  color: inherit;
+}
+
+/* Options panel in the lower-right corner, same look as mango-grid */
+.panel {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  color: white;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+
+.controls label {
+  display: grid;
+  grid-template-columns: 40px 120px 40px;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: #888;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid #333;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.toggle:hover,
+.active {
+  color: white;
+  border-color: #777;
+}

@@ -1,0 +1,31 @@
+.container {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: black;
+}
+
+/* touch-action: none, so dragging on a touch screen draws instead of scrolling */
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* pointer-events: none, so drawing still works under the caption */
+.caption {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  margin: 0;
+  padding: 4px 8px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: right;
+  color: #ccc;
+  background: rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+}

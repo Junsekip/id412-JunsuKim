@@ -1,0 +1,42 @@
+.root {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  overflow: hidden;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+/* The author asks for credit when the shader is reused */
+.credit {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  margin: 0;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  color: #ccc;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.7); /* readable over the bright image */
+}
+
+.credit a {
+  color: inherit;
+}
+
+.message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 14px;
+  color: white;
+}

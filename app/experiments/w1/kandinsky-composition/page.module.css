@@ -1,0 +1,25 @@
+.container {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #efe6d2;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* pointer-events: none, so clicks on the caption still reach the canvas */
+.caption {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  margin: 0;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  color: #6b6253;
+  pointer-events: none;
+}
