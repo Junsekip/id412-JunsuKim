@@ -13,6 +13,7 @@ interface Snowflake {
 
 export default function FallingSnow() {
   const [snowSize, setSnowSize] = useState(1);
+  const [snowCount, setSnowCount] = useState(200);
   const snowSizeRef = useRef(1);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -31,10 +32,9 @@ export default function FallingSnow() {
     canvas.height = window.innerHeight;
 
     const snowflakes: Snowflake[] = [];
-    const snowflakeCount = 200;
 
     // Initialize snowflakes
-    for (let i = 0; i < snowflakeCount; i++) {
+    for (let i = 0; i < snowCount; i++) {
       snowflakes.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -80,23 +80,38 @@ export default function FallingSnow() {
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [snowCount]);
 
   return (
     <main className={styles.container}>
       <canvas ref={canvasRef} className={styles.canvas} />
-      <div className={styles.slider}>
-        <label htmlFor="snowSize">Size: {snowSize.toFixed(1)}x</label>
-        <input
-          id="snowSize"
-          type="range"
-          min="0.5"
-          max="3"
-          step="0.1"
-          value={snowSize}
-          onChange={(e) => setSnowSize(parseFloat(e.target.value))}
-          className={styles.sliderInput}
-        />
+      <div className={styles.sliderContainer}>
+        <div className={styles.slider}>
+          <label htmlFor="snowSize">Size: {snowSize.toFixed(1)}x</label>
+          <input
+            id="snowSize"
+            type="range"
+            min="0.5"
+            max="3"
+            step="0.1"
+            value={snowSize}
+            onChange={(e) => setSnowSize(parseFloat(e.target.value))}
+            className={styles.sliderInput}
+          />
+        </div>
+        <div className={styles.slider}>
+          <label htmlFor="snowCount">Count: {snowCount}</label>
+          <input
+            id="snowCount"
+            type="range"
+            min="10"
+            max="500"
+            step="10"
+            value={snowCount}
+            onChange={(e) => setSnowCount(parseInt(e.target.value))}
+            className={styles.sliderInput}
+          />
+        </div>
       </div>
     </main>
   );
