@@ -42,6 +42,27 @@ export default function PaintingsCarousel() {
     }
   }, [searchParams]);
 
+  const parseEyePositions = () => {
+    const eyesParam = searchParams.get("eyes");
+    if (!eyesParam) return null;
+
+    // Format: painting1_x1,y1,x2,y2|painting2_x1,y1,x2,y2
+    const paintingEyes: { [key: number]: { left: { x: number; y: number }; right: { x: number; y: number } } } = {};
+    const positions = eyesParam.split("|");
+
+    positions.forEach((pos, idx) => {
+      const [x1Str, y1Str, x2Str, y2Str] = pos.split(",");
+      if (x1Str && y1Str && x2Str && y2Str) {
+        paintingEyes[idx] = {
+          left: { x: parseFloat(x1Str), y: parseFloat(y1Str) },
+          right: { x: parseFloat(x2Str), y: parseFloat(y2Str) },
+        };
+      }
+    });
+
+    return Object.keys(paintingEyes).length > 0 ? paintingEyes : null;
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % paintings.length);
@@ -71,12 +92,13 @@ export default function PaintingsCarousel() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Eye positions for each painting
-    const eyePositions: { [key: number]: { left: { x: number; y: number }; right: { x: number; y: number } } } = {
-      0: { left: { x: canvas.width * 0.35, y: canvas.height * 0.45 }, right: { x: canvas.width * 0.65, y: canvas.height * 0.45 } }, // Painting 1
-      1: { left: { x: canvas.width * 0.4, y: canvas.height * 0.35 }, right: { x: canvas.width * 0.6, y: canvas.height * 0.35 } }, // Mona Lisa
-      2: { left: { x: canvas.width * 0.35, y: canvas.height * 0.45 }, right: { x: canvas.width * 0.65, y: canvas.height * 0.45 } }, // Painting 3
-      3: { left: { x: canvas.width * 0.3, y: canvas.height * 0.4 }, right: { x: canvas.width * 0.7, y: canvas.height * 0.4 } }, // Painting 4
+    // Use custom eye positions if provided, otherwise use defaults
+    const customEyes = parseEyePositions();
+    const eyePositions: { [key: number]: { left: { x: number; y: number }; right: { x: number; y: number } } } = customEyes || {
+      0: { left: { x: canvas.width * 0.35, y: canvas.height * 0.45 }, right: { x: canvas.width * 0.65, y: canvas.height * 0.45 } },
+      1: { left: { x: canvas.width * 0.4, y: canvas.height * 0.35 }, right: { x: canvas.width * 0.6, y: canvas.height * 0.35 } },
+      2: { left: { x: canvas.width * 0.35, y: canvas.height * 0.45 }, right: { x: canvas.width * 0.65, y: canvas.height * 0.45 } },
+      3: { left: { x: canvas.width * 0.3, y: canvas.height * 0.4 }, right: { x: canvas.width * 0.7, y: canvas.height * 0.4 } },
     };
 
     const eyes = eyePositions[currentIndex];
