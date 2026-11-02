@@ -40,11 +40,10 @@ export default function FallingSnow() {
     }
 
     const drawCheckerboard = () => {
-      for (let x = 0; x < canvas.width; x += squareSize) {
-        for (let y = 0; y < canvas.height; y += squareSize) {
-          const isEven = (Math.floor(x / squareSize) + Math.floor(y / squareSize)) % 2 === 0;
-          ctx.fillStyle = isEven ? "#000000" : "#ffffff";
-          ctx.fillRect(x, y, squareSize, squareSize);
+      for (let row = 0; row < Math.ceil(canvas.height / squareSize); row++) {
+        for (let col = 0; col < Math.ceil(canvas.width / squareSize); col++) {
+          ctx.fillStyle = (row + col) % 2 === 0 ? "#000000" : "#ffffff";
+          ctx.fillRect(col * squareSize, row * squareSize, squareSize, squareSize);
         }
       }
     };
