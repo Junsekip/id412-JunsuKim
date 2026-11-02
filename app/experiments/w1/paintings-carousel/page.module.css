@@ -15,14 +15,15 @@
   object-fit: contain;
   display: block;
   animation: fadeIn 0.5s ease-in-out;
-  position: absolute;
 }
 
-.overlay {
-  position: absolute;
+.dotCanvas {
+  position: fixed;
   top: 0;
   left: 0;
-  cursor: none;
+  width: 100%;
+  height: 100%;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 @keyframes fadeIn {
