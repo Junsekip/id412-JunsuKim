@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 
@@ -27,6 +27,8 @@ export default function PaintingsCarousel() {
   const searchParams = useSearchParams();
   const [paintings, setPaintings] = useState(defaultPaintings);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const paintingsParam = searchParams.get("paintings");
@@ -48,6 +50,67 @@ export default function PaintingsCarousel() {
     return () => clearInterval(interval);
   }, [paintings.length]);
 
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Eye positions for each painting
+    const eyePositions: { [key: number]: { left: { x: number; y: number }; right: { x: number; y: number } } } = {
+      0: { left: { x: canvas.width * 0.35, y: canvas.height * 0.45 }, right: { x: canvas.width * 0.65, y: canvas.height * 0.45 } }, // Painting 1
+      1: { left: { x: canvas.width * 0.4, y: canvas.height * 0.35 }, right: { x: canvas.width * 0.6, y: canvas.height * 0.35 } }, // Mona Lisa
+      2: { left: { x: canvas.width * 0.35, y: canvas.height * 0.45 }, right: { x: canvas.width * 0.65, y: canvas.height * 0.45 } }, // Painting 3
+      3: { left: { x: canvas.width * 0.3, y: canvas.height * 0.4 }, right: { x: canvas.width * 0.7, y: canvas.height * 0.4 } }, // Painting 4
+    };
+
+    const eyes = eyePositions[currentIndex];
+    if (!eyes) return;
+
+    const drawEye = (eyeX: number, eyeY: number) => {
+      const angle = Math.atan2(mousePos.y - eyeY, mousePos.x - eyeX);
+      const pupilDistance = 12;
+      const pupilX = eyeX + Math.cos(angle) * pupilDistance;
+      const pupilY = eyeY + Math.sin(angle) * pupilDistance;
+
+      // White of eye
+      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.beginPath();
+      ctx.arc(eyeX, eyeY, 25, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pupil
+      ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+      ctx.beginPath();
+      ctx.arc(pupilX, pupilY, 14, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Shine
+      ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+      ctx.beginPath();
+      ctx.arc(pupilX - 5, pupilY - 5, 5, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    drawEye(eyes.left.x, eyes.left.y);
+    drawEye(eyes.right.x, eyes.right.y);
+  }, [currentIndex, mousePos]);
+
   return (
     <main className={styles.container}>
       <img
@@ -55,6 +118,7 @@ export default function PaintingsCarousel() {
         alt={paintings[currentIndex].name}
         className={styles.image}
       />
+      <canvas ref={canvasRef} className={styles.overlay} />
     </main>
   );
 }

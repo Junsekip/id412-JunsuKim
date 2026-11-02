@@ -6,6 +6,7 @@
   height: 100vh;
   background: #000;
   overflow: hidden;
+  position: relative;
 }
 
 .image {
@@ -14,6 +15,14 @@
   object-fit: contain;
   display: block;
   animation: fadeIn 0.5s ease-in-out;
+  position: absolute;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: none;
 }
 
 @keyframes fadeIn {
