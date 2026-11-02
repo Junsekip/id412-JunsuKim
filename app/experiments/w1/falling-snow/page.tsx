@@ -26,7 +26,6 @@ export default function FallingSnow() {
 
     const snowflakes: Snowflake[] = [];
     const snowflakeCount = 200;
-    const squareSize = 40;
 
     // Initialize snowflakes
     for (let i = 0; i < snowflakeCount; i++) {
@@ -38,15 +37,6 @@ export default function FallingSnow() {
         opacity: Math.random() * 0.5 + 0.5,
       });
     }
-
-    const drawCheckerboard = () => {
-      for (let row = 0; row < Math.ceil(canvas.height / squareSize); row++) {
-        for (let col = 0; col < Math.ceil(canvas.width / squareSize); col++) {
-          ctx.fillStyle = (row + col) % 2 === 0 ? "#000000" : "#ffffff";
-          ctx.fillRect(col * squareSize, row * squareSize, squareSize, squareSize);
-        }
-      }
-    };
 
     const drawSnowflakes = () => {
       ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
@@ -69,7 +59,8 @@ export default function FallingSnow() {
     };
 
     const animate = () => {
-      drawCheckerboard();
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       drawSnowflakes();
       requestAnimationFrame(animate);
     };
