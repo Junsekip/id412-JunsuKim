@@ -22,6 +22,7 @@ export default function FallingSnow() {
   const mousePos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
   const prevMousePos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
   const mouseVel = useRef({ x: 0, y: 0 });
+  const mouseTimeRef = useRef(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -75,6 +76,8 @@ export default function FallingSnow() {
     const drawSnowflakes = () => {
       ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
 
+      let largeSnowballNearby = false;
+
       snowflakes.forEach((flake) => {
         // Count nearby particles to grow size
         let nearbyCount = 0;
@@ -110,13 +113,26 @@ export default function FallingSnow() {
           flake.vx += (dx / distance) * force;
           flake.vy += (dy / distance) * force;
 
+          // Check if this is a large snowball
+          const sizeMultiplier = flake.size / flake.baseSize;
+          if (sizeMultiplier > 4.0) {
+            largeSnowballNearby = true;
+          }
+
           // Calculate cursor speed
           const cursorSpeed = Math.sqrt(mouseVel.current.x ** 2 + mouseVel.current.y ** 2);
           const throwThreshold = 15;
-          const sizeMultiplier = flake.size / flake.baseSize;
+          const timeThreshold = 1000; // 1 second in milliseconds
 
-          // Apply throwing force only to big gathered snowballs (size > 4.0x)
-          if (cursorSpeed > throwThreshold && sizeMultiplier > 4.0) {
+          // Apply throwing force only if conditions are met:
+          // 1. Snowball > 4.0x size
+          // 2. Mouse stayed for 1+ second
+          // 3. Cursor moving fast
+          if (
+            sizeMultiplier > 4.0 &&
+            mouseTimeRef.current >= timeThreshold &&
+            cursorSpeed > throwThreshold
+          ) {
             const throwForce = (cursorSpeed - throwThreshold) * 0.8;
             flake.vx += mouseVel.current.x * throwForce * 0.1;
             flake.vy += mouseVel.current.y * throwForce * 0.1;
@@ -152,6 +168,13 @@ export default function FallingSnow() {
         ctx.arc(flake.x, flake.y, flake.size * snowSizeRef.current, 0, Math.PI * 2);
         ctx.fill();
       });
+
+      // Update mouse time tracking
+      if (largeSnowballNearby) {
+        mouseTimeRef.current += 16.67; // ~60fps
+      } else {
+        mouseTimeRef.current = 0; // Reset if no large snowball nearby
+      }
 
       ctx.globalAlpha = 1;
     };
