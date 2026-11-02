@@ -27,6 +27,7 @@ export default function PaintingsCarousel() {
   const searchParams = useSearchParams();
   const [paintings, setPaintings] = useState(defaultPaintings);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [dotSize, setDotSize] = useState(8);
   const imgRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDotPainting = searchParams.get("style") === "dots";
@@ -78,7 +79,6 @@ export default function PaintingsCarousel() {
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const dotSize = 8;
     for (let i = 0; i < canvas.width; i += dotSize) {
       for (let j = 0; j < canvas.height; j += dotSize) {
         const index = (j * canvas.width + i) * 4;
@@ -93,7 +93,7 @@ export default function PaintingsCarousel() {
         ctx.fill();
       }
     }
-  }, [isDotPainting, currentIndex]);
+  }, [isDotPainting, currentIndex, dotSize]);
 
   return (
     <main className={styles.container}>
@@ -105,6 +105,20 @@ export default function PaintingsCarousel() {
         style={{ display: isDotPainting ? "none" : "block" }}
       />
       {isDotPainting && <canvas ref={canvasRef} className={styles.dotCanvas} />}
+      {isDotPainting && (
+        <div className={styles.slider}>
+          <label htmlFor="dotSize">Dot Size: {dotSize}</label>
+          <input
+            id="dotSize"
+            type="range"
+            min="2"
+            max="30"
+            value={dotSize}
+            onChange={(e) => setDotSize(parseInt(e.target.value))}
+            className={styles.sliderInput}
+          />
+        </div>
+      )}
     </main>
   );
 }
