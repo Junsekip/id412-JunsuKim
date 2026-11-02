@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import styles from "./page.module.css";
 
 const MONA_LISA_URL =
-  "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/330px-Mona_Lisa.jpg?utm_source=ko.wikipedia.org&utm_campaign=index&utm_content=thumbnail";
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg";
 
 export default function MonaDot() {
   const [dotSize, setDotSize] = useState(8);
@@ -13,15 +13,28 @@ export default function MonaDot() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = MONA_LISA_URL;
-    img.onload = () => {
-      if (imgRef.current) {
-        imgRef.current.src = MONA_LISA_URL;
+    const loadImage = async () => {
+      try {
+        const response = await fetch(MONA_LISA_URL, {
+          headers: { "Accept": "image/*" },
+        });
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+
+        const img = new Image();
+        img.src = url;
+        img.onload = () => {
+          if (imgRef.current) {
+            imgRef.current.src = url;
+          }
+          drawDotPainting();
+        };
+      } catch (error) {
+        console.error("Failed to load image:", error);
       }
-      drawDotPainting();
     };
+
+    loadImage();
   }, []);
 
   const drawDotPainting = () => {
