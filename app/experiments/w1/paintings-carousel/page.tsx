@@ -35,25 +35,11 @@ export default function PaintingsCarousel() {
 
   return (
     <main className={styles.container}>
-      <div className={styles.canvasWrapper}>
-        <img
-          src={paintings[currentIndex].src}
-          alt={paintings[currentIndex].name}
-          className={styles.image}
-        />
-      </div>
-      <div className={styles.info}>
-        <h2>{paintings[currentIndex].name}</h2>
-      </div>
-      <div className={styles.dots}>
-        {paintings.map((_, idx) => (
-          <div
-            key={idx}
-            className={`${styles.dot} ${idx === currentIndex ? styles.active : ""}`}
-            onClick={() => setCurrentIndex(idx)}
-          />
-        ))}
-      </div>
+      <img
+        src={paintings[currentIndex].src}
+        alt={paintings[currentIndex].name}
+        className={styles.image}
+      />
     </main>
   );
 }
