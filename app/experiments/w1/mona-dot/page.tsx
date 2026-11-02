@@ -8,7 +8,7 @@ const MONA_LISA_URL =
 
 export default function MonaDot() {
   const [dotSize, setDotSize] = useState(8);
-  const [paintingScale, setPaintingScale] = useState(2);
+  const [paintingScale, setPaintingScale] = useState(4);
   const imgRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
