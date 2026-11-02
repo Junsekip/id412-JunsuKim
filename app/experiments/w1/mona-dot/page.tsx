@@ -8,6 +8,7 @@ const MONA_LISA_URL =
 
 export default function MonaDot() {
   const [dotSize, setDotSize] = useState(8);
+  const [paintingScale, setPaintingScale] = useState(2);
   const imgRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -36,7 +37,8 @@ export default function MonaDot() {
 
     const imgWidth = img.width;
     const imgHeight = img.height;
-    const scale = Math.min(canvas.width / imgWidth, canvas.height / imgHeight);
+    const baseScale = Math.min(canvas.width / imgWidth, canvas.height / imgHeight);
+    const scale = baseScale * paintingScale;
     const x = (canvas.width - imgWidth * scale) / 2;
     const y = (canvas.height - imgHeight * scale) / 2;
 
@@ -66,7 +68,7 @@ export default function MonaDot() {
 
   useEffect(() => {
     drawDotPainting();
-  }, [dotSize]);
+  }, [dotSize, paintingScale]);
 
   return (
     <main className={styles.container}>
@@ -77,17 +79,32 @@ export default function MonaDot() {
         className={styles.hiddenImage}
       />
       <canvas ref={canvasRef} className={styles.canvas} />
-      <div className={styles.slider}>
-        <label htmlFor="dotSize">Dot Size: {dotSize}</label>
-        <input
-          id="dotSize"
-          type="range"
-          min="2"
-          max="30"
-          value={dotSize}
-          onChange={(e) => setDotSize(parseInt(e.target.value))}
-          className={styles.sliderInput}
-        />
+      <div className={styles.sliderContainer}>
+        <div className={styles.slider}>
+          <label htmlFor="dotSize">Dot Size: {dotSize}</label>
+          <input
+            id="dotSize"
+            type="range"
+            min="2"
+            max="30"
+            value={dotSize}
+            onChange={(e) => setDotSize(parseInt(e.target.value))}
+            className={styles.sliderInput}
+          />
+        </div>
+        <div className={styles.slider}>
+          <label htmlFor="paintingScale">Zoom: {paintingScale.toFixed(1)}x</label>
+          <input
+            id="paintingScale"
+            type="range"
+            min="0.5"
+            max="4"
+            step="0.1"
+            value={paintingScale}
+            onChange={(e) => setPaintingScale(parseFloat(e.target.value))}
+            className={styles.sliderInput}
+          />
+        </div>
       </div>
     </main>
   );

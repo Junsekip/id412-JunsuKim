@@ -19,7 +19,7 @@
   display: block;
 }
 
-.slider {
+.sliderContainer {
   position: fixed;
   bottom: 40px;
   left: 50%;
@@ -29,8 +29,14 @@
   border-radius: 10px;
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 40px;
   z-index: 10;
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .slider label {
