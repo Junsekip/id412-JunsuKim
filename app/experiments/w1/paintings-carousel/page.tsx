@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 
-const paintings = [
+const defaultPaintings = [
   {
     src: "https://img8.yna.co.kr/etc/inner/KR/2023/03/24/AKR20230324120300805_02_i_P4.jpg",
     name: "Painting 1",
@@ -23,7 +24,21 @@ const paintings = [
 ];
 
 export default function PaintingsCarousel() {
+  const searchParams = useSearchParams();
+  const [paintings, setPaintings] = useState(defaultPaintings);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const paintingsParam = searchParams.get("paintings");
+    if (paintingsParam) {
+      const urls = paintingsParam.split(".");
+      const parsedPaintings = urls.map((url, idx) => ({
+        src: decodeURIComponent(url),
+        name: `Painting ${idx + 1}`,
+      }));
+      setPaintings(parsedPaintings);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -31,7 +46,7 @@ export default function PaintingsCarousel() {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [paintings.length]);
 
   return (
     <main className={styles.container}>
