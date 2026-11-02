@@ -113,9 +113,10 @@ export default function FallingSnow() {
           // Calculate cursor speed
           const cursorSpeed = Math.sqrt(mouseVel.current.x ** 2 + mouseVel.current.y ** 2);
           const throwThreshold = 15;
+          const sizeMultiplier = flake.size / flake.baseSize;
 
-          // Apply throwing force only to gathered snowballs within attraction range
-          if (cursorSpeed > throwThreshold && flake.mass > 1) {
+          // Apply throwing force only to big gathered snowballs (size > 4.0x)
+          if (cursorSpeed > throwThreshold && sizeMultiplier > 4.0) {
             const throwForce = (cursorSpeed - throwThreshold) * 0.8;
             flake.vx += mouseVel.current.x * throwForce * 0.1;
             flake.vy += mouseVel.current.y * throwForce * 0.1;
